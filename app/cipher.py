@@ -1,5 +1,5 @@
-from src.hash import Hash
-from src.prng import GeneratorBBS
+from app.hash import Hash
+from app.prng import GeneratorBBS
 
 
 ENCODING = "UTF-8"
@@ -31,14 +31,12 @@ class Magma:
     def encrypt(self, data: str|bytes, password: str) -> str:
         """ Функция инициализации шифрования сообщения """
         data: bytearray = self.__converttexttobytearray(data)
-        print('[INFO] Входная байтовая последовательность: ', data, ' - ', len(data))
         self.__key: list[int] = self.__generate_256bit_key(password)   # Генерируем 256 битный ключ из пароля
         self.__subkeys: bytearray = self.__convertsequencetobytearray(self.__key)      # Разбиваем ключ на 8 кусков
         blocks = self.__generate_blocks(data)
 
         output_buffer: list[str] = []
         for block in blocks: 
-            # print('encr blck', block)
             encrytped_block = self.__encrypt_block(block, self.__subkeys)
             output_block: bytes = int.to_bytes(encrytped_block, length=self.__block_size, byteorder='little', signed=False)
             output_buffer.append(output_block.hex())
@@ -106,7 +104,6 @@ class Magma:
 
         for i in range(len(result)): 
             result[i] = int.from_bytes(result[i], 'little', signed=False)
-            # print('decr blck', result[i])
         return result
 
     def __crypto_function(self, part: int, key: int) -> int:
